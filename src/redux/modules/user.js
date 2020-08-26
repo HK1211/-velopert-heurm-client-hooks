@@ -69,5 +69,12 @@ export default handleActions({
             window.location.href = '/auth/login?expired';
             return initialState;
         }
+    }),
+    ...pender({
+        type: LOGOUT,
+        onSuccess: (state, action) => {
+            storage.remove('loggedInfo');
+            window.location.href = '/'; // 홈페이지로 새로고침
+        }
     })
 }, initialState);
