@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
 import { AuthContent, InputWithLabel, AuthButton, RightAlignedLink, AuthError   } from 'components/Auth';
 import { useDispatch, useSelector } from 'react-redux';
-import {changeInput,initializeForm,setError, checkEmailExists, checkUsernameExists, localRegister} from 'redux/modules/auth';
+import { changeInput,initializeForm,setError, checkEmailExists, checkUsernameExists, localRegister } from 'redux/modules/auth';
+import { setLoggedInfo, setValidated } from 'redux/modules/user';
 import {isEmail, isLength, isAlphanumeric} from 'validator';
 import debounce from 'lodash/debounce';
-// import storage from 'lib/storage';
+import storage from 'lib/storage';
 
 const Register = ({history}) => {
     const error = useSelector(state=>state.auth.register.error);
@@ -54,7 +55,6 @@ const Register = ({history}) => {
     }, [checkEmail, dispatch, handleSetError]);
     // 유저네임 중복 확인 결과
     useEffect(()=>{
-        console.log(checkUsername);
         if(checkUsername) {
             handleSetError('이미 존재하는 아이디입니다.');
         } else {
@@ -121,6 +121,7 @@ const Register = ({history}) => {
         });
     }, [dispatch]);
 
+    // 회원가입 통신 이벤트 액션핸들러
     const handleLocalRegister = async () => {
         if(error) return; // 현재 에러가 있는 상태라면 진행하지 않음
         if(!validate['email'](email) 
@@ -134,34 +135,26 @@ const Register = ({history}) => {
         dispatch(localRegister({
             email, username, password
         }));
-
-        // try {
-        //     const loggedInfo = this.props.result.toJS();
-        //     console.log(loggedInfo);
-        //     // TODO: 로그인 정보 저장 (로컬스토리지/스토어)
-        //     history.push('/'); // 회원가입 성공시 홈페이지로 이동
-        // } catch(e) {
-        //     // 에러 처리하기
-        //     if(e.response.status === 409) {
-        //         const { key } = e.response.data;
-        //         const message = key === 'email' ? '이미 존재하는 이메일입니다.' : '이미 존재하는 아이디입니다.';
-        //         return this.setError(message);
-        //     }
-        //     this.setError('알 수 없는 에러가 발생했습니다.')
-        // }
     };
-
+    const handleSetLoggedInfo = useCallback((loggedInfo)=>{
+        dispatch(setLoggedInfo(loggedInfo));
+    }, [dispatch]);
+    const handleSetValidated = useCallback(()=>{
+        dispatch(setValidated(true))
+    }, [dispatch]);
+    
     useEffect(()=>{
+        console.log(result);
         if(result) {
+            console.log(result);
             const loggedInfo = result;
-            console.log(loggedInfo);
-            // storage.set('loggedInfo', loggedInfo);
-            // UserActions.setLoggedInfo(loggedInfo);
-            // UserActions.setValidated(true);
-            // history.push('/'); // 회원가입 성공시 홈페이지로 이동
+            storage.set('loggedInfo', loggedInfo);
+            handleSetLoggedInfo(loggedInfo);
+            handleSetValidated();
+            history.push('/'); // 회원가입 성공시 홈페이지로 이동
         }
-        
-    }, [result]);
+    }, [handleSetLoggedInfo, handleSetValidated, history, result]);
+
     useEffect(()=>{
         if(resultError) {
             const { key } = resultError;

@@ -54,6 +54,11 @@ const initialState = {
         loading: false,
         data: null,
         error: null
+    },
+    localLogin: {
+        loading: false,
+        data: null,
+        error: null
     }
 }
 
@@ -178,7 +183,7 @@ export default handleActions({
         onPending: (state) => {
             return {
                 ...state,
-                result: {
+                localLogin: {
                     loading: true,
                     data: null,
                     error: null
@@ -188,7 +193,7 @@ export default handleActions({
         onSuccess: (state, action) => {
             return {
                 ...state,
-                result: {
+                localLogin: {
                     loading: false,
                     data: action.payload.data,
                     error: null
@@ -198,10 +203,14 @@ export default handleActions({
         onFailure: (state, action) => {
             return {
                 ...state,
-                result: {
+                localLogin: {
                     loading: false,
                     data: null,
-                    error: action.payload.data.error
+                    error: 'error'
+                },
+                login: {
+                    ...state.login,
+                    error: '잘못된 계정 정보 입니다'
                 }
             }
         }
