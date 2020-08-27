@@ -7,6 +7,9 @@ import storage from 'lib/storage';
 import { setLoggedInfo, checkStatus } from 'redux/modules/user';
 import { useDispatch } from 'react-redux';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+
 const App = () => {
   const dispatch = useDispatch();
   
@@ -25,6 +28,7 @@ const App = () => {
         <HeaderContainer />
         <Route exact path="/" component={Home}/>
         <Route path="/auth" component={Auth}/>
+        <ToastContainer style={{zIndex: 20}} hideProgressBar={false} position="bottom-right"/>
     </div>
 );
 }
