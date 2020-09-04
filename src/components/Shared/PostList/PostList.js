@@ -8,15 +8,20 @@ const Wrapper = styled.div`
     margin-top: 1rem;
 `;
 
-const PostList = ({posts}) => {
+const PostList = ({posts, onToggleLike, onCommentClick, masonryRef}) => {
     const postList = posts.map(
         (post) => (
-            <Post key={post._id} post={post}/>
+            <Post
+                key={post._id}
+                post={post}
+                onToggleLike={onToggleLike}
+                onCommentClick={onCommentClick}
+            />
         )
     )
     return (
         <Wrapper>
-            <Masonry options={{gutter: 16}}>
+            <Masonry options={{gutter: 16}} ref={masonryRef}>
                 {postList}
             </Masonry>
         </Wrapper>

@@ -1,19 +1,27 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import WritePost from 'components/Home/WritePost';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeWritePostInput, writePost } from 'redux/modules/home';
 import { toast } from 'react-toastify';
 
-const WritePostContainer = () => {
+
+function WritePostContainer() {
     const { value } = useSelector(state=>state.home.writePost);
     const { data, error } = useSelector(state=>state.home.ajax.writePost);
     const dispatch = useDispatch();
+    const inputRef = useRef(null);
     const handleChange = useCallback((e)=>{
         dispatch(changeWritePostInput(e.target.value));
     }, [dispatch]);
     // 알림에서 보여줄 DOM
     const message = (message) => (<div style={{fontSize: '1.1rem'}}>{message}</div>);
     const handlePost = useCallback(()=>{
+        inputRef.current.blur();
+        setTimeout(
+            () => {
+                inputRef.current.focus();
+            }, 100
+        );
         // 사전 오류 핸들링
         if(value.length < 5) {
             dispatch(changeWritePostInput(''));
@@ -37,12 +45,13 @@ const WritePostContainer = () => {
             toast(message('오류가 발생했습니다.'), { type: 'error' });
         };
     }, [data, error]);
-
+    
     return (
         <WritePost 
             value={value}
             onChange={handleChange}
             onPost={handlePost}
+            inputRef={inputRef}
         />
     );
 }

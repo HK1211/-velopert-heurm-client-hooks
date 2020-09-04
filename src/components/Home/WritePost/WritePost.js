@@ -38,13 +38,12 @@ const StyledTextarea = styled(Textarea)`
     `};
 `;
 
-const WritePost = ({onChange, onPost, value}) => {
+const WritePost = ({onChange, onPost, value, inputRef}) => {
     const message = (message) => (<div style={{fontSize: '1.1rem'}}>{message}</div>);
     const handleOnPaste = useCallback((e)=>{
         e.preventDefault();
         toast(message('생각의 흐름대로 직접 작성해 주세요.'));
     }, []);
-
     return (
         <Wrapper>
             <StyledTextarea
@@ -54,6 +53,7 @@ const WritePost = ({onChange, onPost, value}) => {
                 onChange={onChange}
                 placeholder={`의식의 흐름대로 당신의 생각을 적어보세요.\n5초이상 아무것도 입력하지 않으면 자동으로 포스팅됩니다.`}
                 onPaste={handleOnPaste}
+                ref={inputRef}
             />
             <Progress onPost={onPost}/>
         </Wrapper>

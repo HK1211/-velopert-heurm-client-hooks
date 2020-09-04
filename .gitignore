@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 yarn.lock
- .gitignore
+.gitignore
  
 # testing
 /coverage

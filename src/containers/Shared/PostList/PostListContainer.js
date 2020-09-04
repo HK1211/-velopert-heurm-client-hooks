@@ -1,16 +1,22 @@
 import React, { useEffect, useCallback, useRef } from 'react'
 import PostList from 'components/Shared/PostList';
-import { loadPost, prefetchPost, showPrefetchedPost } from 'redux/modules/posts';
+import { loadPost, prefetchPost, showPrefetchedPost, likePost, unlikePost, toggleComment } from 'redux/modules/posts';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { setRelayoutHandler } from 'lib/withRelayout';
 
 const PostListContainer = () => {
     const next = useSelector(state=>state.posts.next);
     // const loading = useSelector(state=>state.posts.ajax.postList.loading);
     const posts = useSelector(state=>state.posts.resultPostList);
     const nextData = useSelector(state=>state.posts.ajax.nextData.data);
+    const logged = useSelector(state=>state.user.logged);
+
     const dispatch = useDispatch();
     const prev = useRef(null);
     const prevNext = useRef(false);
+    const masonry = useRef(null);
+    const willMount = useRef(true);
 
     const handleScroll = useCallback(()=> {
         if(!nextData) return;
@@ -30,6 +36,27 @@ const PostListContainer = () => {
             handleScroll();
         }
     }, [dispatch, next, nextData]);
+
+    const handleToggleLike = useCallback(({postId, liked})=>{
+       const message = (message) => (<div style={{fontSize: '1.1rem'}}>{message}</div>);
+        if(!logged) {
+            return toast(message('로그인 후 이용할 수 있습니다.'), { type: 'error' });
+        }
+        if(liked) {
+            dispatch(unlikePost(postId));
+        } else {
+            dispatch(likePost(postId));
+       }
+    }, [dispatch, logged]);
+
+    const handleCommentClick = useCallback((postId)=>{
+        dispatch(toggleComment(postId));
+        setTimeout(() => masonry.current.masonry.layout(), 0);
+    }, [dispatch]);
+
+    const handleRelayout = useCallback(()=>{
+        setTimeout(() => masonry.current.masonry.layout(), 0);
+    }, []);
 
     useEffect(()=>{
         // 최초 포스트 호출
@@ -52,14 +79,22 @@ const PostListContainer = () => {
                 prevNext.current = true;
             }
         }
-    }, [dispatch, next])
+    }, [dispatch, next]);
 
-    // if(loading) {
-    //     return <div>로딩중</div>
-    // }
+    useEffect(()=>{
+        if(willMount.current) {
+            setRelayoutHandler(handleRelayout);
+            willMount.current = false;
+        }
+    }, [handleRelayout]);
 
     return (
-        <PostList posts={posts}/>
+        <PostList
+            posts={posts}
+            onToggleLike={handleToggleLike}
+            onCommentClick={handleCommentClick}
+            masonryRef={masonry}
+        />
     );
 }
 
