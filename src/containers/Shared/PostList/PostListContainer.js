@@ -1,11 +1,13 @@
-import React, { useEffect, useCallback, useRef } from 'react'
+import React, { useEffect, useCallback, useRef, createContext, useContext } from 'react'
 import PostList from 'components/Shared/PostList';
 import { loadPost, prefetchPost, showPrefetchedPost, likePost, unlikePost, toggleComment } from 'redux/modules/posts';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { setRelayoutHandler } from 'lib/withRelayout';
 
-const PostListContainer = () => {
+const ReLayout = createContext();
+
+const PostListContainer = ({username}) => {
     const next = useSelector(state=>state.posts.next);
     // const loading = useSelector(state=>state.posts.ajax.postList.loading);
     const posts = useSelector(state=>state.posts.resultPostList);
@@ -13,6 +15,7 @@ const PostListContainer = () => {
     const logged = useSelector(state=>state.user.logged);
 
     const dispatch = useDispatch();
+
     const prev = useRef(null);
     const prevNext = useRef(false);
     const masonry = useRef(null);
@@ -59,9 +62,9 @@ const PostListContainer = () => {
     }, []);
 
     useEffect(()=>{
-        // 최초 포스트 호출
-        dispatch(loadPost());
-    }, [dispatch]);
+        // 최초 포스트 호출 + username 변경되었을때 호출
+        dispatch(loadPost(username));
+    }, [dispatch, username]);
 
     useEffect(()=>{
         // 이벤트 리스너 생성
@@ -89,13 +92,23 @@ const PostListContainer = () => {
     }, [handleRelayout]);
 
     return (
-        <PostList
-            posts={posts}
-            onToggleLike={handleToggleLike}
-            onCommentClick={handleCommentClick}
-            masonryRef={masonry}
-        />
+        <ReLayout.Provider value={handleRelayout}>
+            <PostList
+                posts={posts}
+                onToggleLike={handleToggleLike}
+                onCommentClick={handleCommentClick}
+                masonryRef={masonry}
+            />
+        </ReLayout.Provider>
     );
 }
 
-export default PostListContainer
+export function useReLayout() {
+    const context = useContext(ReLayout);
+    if (!context) {
+      throw new Error('Cannot find ReLayout');
+    }
+    return context;
+  }
+
+export default PostListContainer;

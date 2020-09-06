@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import oc from 'open-color';
 import Comment from './Comment';
 import withRelayout from 'lib/withRelayout';
+import { useReLayout } from 'containers/Shared/PostList/PostListContainer';
 
 const CommentListwrapper = styled.div`
     margin-top: 0.75rem;
@@ -20,11 +21,13 @@ const ReadMore = styled.div`
 `
 const CommentList = ({ comments, onRelayout }) => {
     const [limit, setLimit] = useState(5);
+    const reLayout =  useReLayout();
 
     const handleReadMore = useCallback(()=>{
         setLimit((limit)=>limit + 10);
-        onRelayout();
-    }, [onRelayout]);
+        reLayout(); // useContext 방식으로 reLayout 방법
+        //onRelayout(); // Hoc 방식으로 reLayout 방법
+    }, [reLayout]);
 
     if (comments.length === 0) return null; // 덧글이 비어있다면 아무것도 렌더링하지 않습니다.
 

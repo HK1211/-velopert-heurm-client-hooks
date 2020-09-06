@@ -10,6 +10,7 @@ const Wrapper = styled.div`
 // 인풋을 감싸줍니다
 const InputWrapper = styled.div`
     padding: 0.75rem;
+    
 `;
 
 // 기본 스타일이 무효화되고, 밑줄이 그어진 인풋, 포커스 됐을땐 밑줄 색상 변경

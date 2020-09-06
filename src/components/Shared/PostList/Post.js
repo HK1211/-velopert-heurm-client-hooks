@@ -10,6 +10,8 @@ import buildFormatter from 'react-timeago/lib/formatters/buildFormatter';
 import { media, shadow } from 'lib/styleUtils';
 import PostFooter from './PostFooter';
 import CommentBlockContainer from 'containers/Shared/PostList/CommentBlockContainer';
+import { Link } from 'react-router-dom';
+// import scuize from 'lib/scuize'; // Hoc를 이용한 shouldComponentUpdate
 
 const formatter = buildFormatter(koreanStrings); // 한글 형식으로 보여주기 위해 필요
 
@@ -49,10 +51,12 @@ const UserThumbnail = styled.div`
 `;
 
 // 유저네임을 띄워줍니다
-const Username = styled.div`
+const Username = styled(Link)`
     font-weight: 500;
     margin-left: 0.3rem;
     font-size: 0.9rem;
+    color: inherit;
+    text-decoration: none;    
 `;
 
 // 몇번째 생각인지 알려줍니다
@@ -105,7 +109,7 @@ const Post = ({ post, onToggleLike, onCommentClick }) =>{
         <Wrapper>
             <PostHead>
                 <UserThumbnail image={`/api/users/${username}/thumbnail`}/>
-                <Username>{username}</Username>
+                <Username to={`/@${username}`}>{username}</Username>
                 <Count>#{count}번째 생각</Count>
                 <Time><TimeAgo date={new Date(createdAt)} formatter={formatter}/></Time>
             </PostHead>
@@ -124,4 +128,7 @@ const Post = ({ post, onToggleLike, onCommentClick }) =>{
     )
 }
 
-export default Post;
+export default React.memo(Post);
+// export default scuize(Post, function(nextProps, nextState){
+//     return this.props.post !== nextProps.post; // 포스트가 변경되었을때만 리렌더링
+// });

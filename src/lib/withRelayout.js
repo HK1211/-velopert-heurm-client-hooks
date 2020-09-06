@@ -12,11 +12,9 @@ export const setRelayoutHandler = (handler) => {
 
 export default function withRelayout(WrappedComponent){
     // 함수 내부에서 컴포넌트를 정의합니다
-    return class extends React.Component {
-        render() {
-            return (
-                <WrappedComponent onRelayout={relayout} {...this.props}/>
-            );
-        }
+    return (props) => {
+        return (
+            <WrappedComponent onRelayout={relayout} {...props}/>
+        );
     }
 }

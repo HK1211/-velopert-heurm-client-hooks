@@ -4,6 +4,8 @@ import auth from './auth';
 import user from './user';
 import home from './home';
 import posts from './posts';
+import userPage from './userPage';
+
 import { penderReducer } from 'redux-pender';
 
 export default combineReducers({
@@ -12,5 +14,6 @@ export default combineReducers({
     user,
     home,
     posts,
+    userPage,
     pender: penderReducer
 });

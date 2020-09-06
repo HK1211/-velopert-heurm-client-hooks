@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { Route } from 'react-router-dom';
-import { Home, Auth } from 'pages';
+import { Home, Auth, User } from 'pages';
 import HeaderContainer from 'containers/Base/HeaderContainer';
 
 import storage from 'lib/storage';
@@ -28,6 +28,7 @@ const App = () => {
         <HeaderContainer />
         <Route exact path="/" component={Home}/>
         <Route path="/auth" component={Auth}/>
+        <Route path="/@:username" component={User}/>
         <ToastContainer style={{zIndex: 20}} hideProgressBar={false} position="bottom-right"/>
     </div>
 );
